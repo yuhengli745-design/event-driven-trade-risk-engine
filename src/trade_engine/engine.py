@@ -17,6 +17,10 @@ class EventSink(Protocol):
     def append(self, event: Event) -> None: ...
 
 
+class EventSource(Protocol):
+    def read_all(self) -> list[Event]: ...
+
+
 class ProcessingStatus(StrEnum):
     ACCEPTED = "ACCEPTED"
     REJECTED = "REJECTED"
@@ -47,6 +51,9 @@ class TradingEngine:
             self.event_store.append(event)
         self._commit(candidate)
         return result
+
+    def replay(self, source: EventSource) -> list[ProcessingResult]:
+        return [self.process(event, persist=False) for event in source.read_all()]
 
     def _candidate(self) -> TradingEngine:
         candidate = TradingEngine(self.risk_manager)
