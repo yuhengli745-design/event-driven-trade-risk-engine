@@ -6,6 +6,7 @@ from copy import deepcopy
 from dataclasses import dataclass
 from decimal import Decimal
 from enum import StrEnum
+import logging
 from typing import Protocol
 
 from .events import Event, ExecutionReceived, OrderCancelled, OrderStatus, OrderSubmitted, PriceUpdated
@@ -35,9 +36,16 @@ class ProcessingResult:
 
 
 class TradingEngine:
-    def __init__(self, risk_manager: RiskManager, event_store: EventSink | None = None) -> None:
+    def __init__(
+        self,
+        risk_manager: RiskManager,
+        event_store: EventSink | None = None,
+        *,
+        logger: logging.Logger | None = None,
+    ) -> None:
         self.risk_manager = risk_manager
         self.event_store = event_store
+        self.logger = logger
         self.orders: dict[str, Order] = {}
         self.positions: dict[str, Position] = {}
         self.prices: dict[str, Decimal] = {}
@@ -50,6 +58,7 @@ class TradingEngine:
         if persist and self.event_store is not None:
             self.event_store.append(event)
         self._commit(candidate)
+        self._log(event, result)
         return result
 
     def replay(self, source: EventSource) -> list[ProcessingResult]:
@@ -70,6 +79,21 @@ class TradingEngine:
         self.prices = candidate.prices
         self.execution_ids = candidate.execution_ids
         self.processed_event_ids = candidate.processed_event_ids
+
+    def _log(self, event: Event, result: ProcessingResult) -> None:
+        if self.logger is None:
+            return
+        data = {
+            "event_type": type(event).__name__,
+            "event_id": event.event_id,
+            "status": result.status.value,
+        }
+        for field in ("order_id", "execution_id", "symbol"):
+            if hasattr(event, field):
+                data[field] = getattr(event, field)
+        if result.reason:
+            data["reason"] = result.reason
+        self.logger.info("event_processed", extra={"event_data": data})
 
     def _apply(self, event: Event) -> ProcessingResult:
         if event.event_id in self.processed_event_ids:
