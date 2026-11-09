@@ -12,12 +12,13 @@ from trade_engine.events import (
     Side,
 )
 
-
 NOW = datetime(2026, 6, 1, tzinfo=UTC)
 
 
 def test_order_submission_is_immutable_and_uses_decimal_values() -> None:
-    event = OrderSubmitted("evt-1", NOW, "ord-1", "AAPL", Side.BUY, Decimal("10"), Decimal("185.50"))
+    event = OrderSubmitted(
+        "evt-1", NOW, "ord-1", "AAPL", Side.BUY, Decimal("10"), Decimal("185.50")
+    )
     assert event.quantity == Decimal("10")
     with pytest.raises(FrozenInstanceError):
         event.symbol = "MSFT"  # type: ignore[misc]

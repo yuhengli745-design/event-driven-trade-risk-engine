@@ -4,10 +4,14 @@ from decimal import Decimal
 import pytest
 
 from trade_engine.engine import TradingEngine
-from trade_engine.event_store import EventStoreError, JsonLinesEventStore, decode_event, encode_event
+from trade_engine.event_store import (
+    EventStoreError,
+    JsonLinesEventStore,
+    decode_event,
+    encode_event,
+)
 from trade_engine.events import OrderSubmitted, Side
 from trade_engine.risk import RiskLimits, RiskManager
-
 
 NOW = datetime(2026, 6, 1, 12, 30, tzinfo=UTC)
 
@@ -42,7 +46,9 @@ def test_append_failure_leaves_engine_state_unchanged() -> None:
         def append(self, event) -> None:
             raise EventStoreError("disk full")
 
-    subject = TradingEngine(RiskManager(RiskLimits(Decimal("100"), Decimal("10000"))), BrokenStore())
+    subject = TradingEngine(
+        RiskManager(RiskLimits(Decimal("100"), Decimal("10000"))), BrokenStore()
+    )
     event = OrderSubmitted("e1", NOW, "o1", "AAPL", Side.BUY, Decimal("1"), Decimal("10"))
     with pytest.raises(EventStoreError, match="disk full"):
         subject.process(event)

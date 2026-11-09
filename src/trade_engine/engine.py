@@ -2,14 +2,21 @@
 
 from __future__ import annotations
 
+import logging
 from copy import deepcopy
 from dataclasses import dataclass
 from decimal import Decimal
 from enum import StrEnum
-import logging
 from typing import Protocol
 
-from .events import Event, ExecutionReceived, OrderCancelled, OrderStatus, OrderSubmitted, PriceUpdated
+from .events import (
+    Event,
+    ExecutionReceived,
+    OrderCancelled,
+    OrderStatus,
+    OrderSubmitted,
+    PriceUpdated,
+)
 from .models import Order, Position
 from .risk import RiskManager
 
@@ -155,7 +162,9 @@ class TradingEngine:
 
     def _execute(self, event: ExecutionReceived) -> ProcessingResult:
         if event.execution_id in self.execution_ids:
-            return ProcessingResult(ProcessingStatus.IGNORED, event.event_id, "duplicate execution_id")
+            return ProcessingResult(
+                ProcessingStatus.IGNORED, event.event_id, "duplicate execution_id"
+            )
         order = self.orders.get(event.order_id)
         if order is None:
             return ProcessingResult(ProcessingStatus.REJECTED, event.event_id, "unknown order_id")

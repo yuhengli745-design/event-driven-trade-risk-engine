@@ -6,7 +6,6 @@ from trade_engine.event_store import JsonLinesEventStore
 from trade_engine.events import ExecutionReceived, OrderSubmitted, PriceUpdated, Side
 from trade_engine.risk import RiskLimits, RiskManager
 
-
 NOW = datetime(2026, 6, 1, tzinfo=UTC)
 
 

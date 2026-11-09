@@ -5,7 +5,6 @@ from decimal import Decimal
 
 from .events import OrderStatus, Side
 
-
 ZERO = Decimal("0")
 
 

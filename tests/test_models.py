@@ -10,7 +10,9 @@ def test_order_moves_from_partial_to_filled() -> None:
     order = Order("o1", "AAPL", Side.BUY, Decimal("10"), Decimal("100"))
     order.apply_execution(Decimal("4"))
     assert (order.filled_quantity, order.remaining_quantity, order.status) == (
-        Decimal("4"), Decimal("6"), OrderStatus.PARTIALLY_FILLED
+        Decimal("4"),
+        Decimal("6"),
+        OrderStatus.PARTIALLY_FILLED,
     )
     order.apply_execution(Decimal("6"))
     assert order.status is OrderStatus.FILLED

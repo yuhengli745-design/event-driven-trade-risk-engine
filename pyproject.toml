@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "A deterministic event-driven trade lifecycle and risk engine"
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "MIT" }
+license = { file = "LICENSE" }
 authors = [{ name = "Yuheng Li" }]
 dependencies = []
 

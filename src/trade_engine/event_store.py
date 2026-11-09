@@ -11,7 +11,6 @@ from typing import Any
 
 from .events import Event, ExecutionReceived, OrderCancelled, OrderSubmitted, PriceUpdated, Side
 
-
 SCHEMA_VERSION = 1
 
 
