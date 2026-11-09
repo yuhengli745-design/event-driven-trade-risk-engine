@@ -32,7 +32,12 @@ def test_store_preserves_append_order(tmp_path) -> None:
 
 @pytest.mark.parametrize(
     "line",
-    ["not-json", '{"schema_version":1,"event_type":"Unknown","payload":{}}'],
+    [
+        "not-json",
+        "[]",
+        "null",
+        '{"schema_version":1,"event_type":"Unknown","payload":{}}',
+    ],
 )
 def test_malformed_records_report_line_number(tmp_path, line: str) -> None:
     path = tmp_path / "events.jsonl"

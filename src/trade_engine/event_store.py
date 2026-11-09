@@ -53,7 +53,9 @@ def encode_event(event: Event) -> str:
 
 def decode_event(raw: str) -> Event:
     try:
-        record: dict[str, Any] = json.loads(raw)
+        record: Any = json.loads(raw)
+        if not isinstance(record, dict):
+            raise EventStoreError("event record must be a JSON object")
         if record.get("schema_version") != SCHEMA_VERSION:
             raise EventStoreError(f"unsupported schema version: {record.get('schema_version')}")
         event_type = record["event_type"]

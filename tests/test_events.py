@@ -1,5 +1,5 @@
 from dataclasses import FrozenInstanceError
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta, timezone
 from decimal import Decimal
 
 import pytest
@@ -33,6 +33,12 @@ def test_order_submission_rejects_non_positive_values(quantity: str, price: str)
 def test_events_require_timezone_aware_timestamp() -> None:
     with pytest.raises(ValueError, match="timezone-aware"):
         PriceUpdated("evt", datetime(2026, 1, 1), "AAPL", Decimal("10"))
+
+
+def test_events_require_utc_timestamp() -> None:
+    non_utc = datetime(2026, 1, 1, tzinfo=timezone(timedelta(hours=1)))
+    with pytest.raises(ValueError, match="UTC"):
+        PriceUpdated("evt", non_utc, "AAPL", Decimal("10"))
 
 
 def test_execution_and_price_require_positive_values() -> None:

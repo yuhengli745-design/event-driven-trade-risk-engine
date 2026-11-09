@@ -120,6 +120,8 @@ Each execution has a unique `execution_id`. Once an execution is accepted, later
 
 Events use a versioned deterministic JSON representation. A fresh engine processing the file in order produces the same serializable snapshot. Invalid records report their exact line number. If appending an event fails, the candidate state is discarded and live state is unchanged.
 
+Replay requires the same engine version and risk configuration that processed the original audit log. In a production design, those configuration versions would be stored alongside the event stream.
+
 ## Project structure
 
 ```text

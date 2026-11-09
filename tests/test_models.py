@@ -46,6 +46,15 @@ def test_short_position_and_crossing_zero() -> None:
     assert position.realized_pnl == Decimal("100")
 
 
+def test_closing_position_resets_average_cost() -> None:
+    position = Position("AAPL")
+    position.apply_execution(Decimal("10"), Decimal("100"))
+    position.apply_execution(Decimal("-10"), Decimal("110"))
+    assert position.quantity == Decimal("0")
+    assert position.average_cost == Decimal("0")
+    assert position.realized_pnl == Decimal("100")
+
+
 def test_unrealized_pnl_is_zero_before_mark() -> None:
     position = Position("AAPL")
     position.apply_execution(Decimal("2"), Decimal("10"))

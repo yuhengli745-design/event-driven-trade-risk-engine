@@ -1,7 +1,7 @@
 """Immutable domain events accepted by the trading engine."""
 
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 from enum import StrEnum
 
@@ -32,6 +32,8 @@ def _validate_base(event_id: str, occurred_at: datetime) -> None:
     _require_text("event_id", event_id)
     if occurred_at.tzinfo is None or occurred_at.utcoffset() is None:
         raise ValueError("occurred_at must be timezone-aware")
+    if occurred_at.utcoffset() != timedelta(0):
+        raise ValueError("occurred_at must use UTC")
 
 
 def _require_positive(name: str, value: Decimal) -> None:
